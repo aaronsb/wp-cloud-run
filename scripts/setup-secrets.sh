@@ -5,7 +5,20 @@
 
 set -e
 
+# Load environment variables if .env exists
+if [ -f .env ]; then
+    echo "Loading configuration from .env file..."
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "Warning: .env file not found. Copy .env.example to .env and configure it."
+    exit 1
+fi
+
 echo "Setting up WordPress secrets in Google Cloud Secret Manager..."
+echo "Project: ${GCP_PROJECT_ID}"
+echo "Region: ${GCP_REGION}"
+echo "Cloud SQL Instance: ${CLOUD_SQL_INSTANCE_NAME}"
+echo
 
 # Function to create or update a secret
 create_secret() {
@@ -22,9 +35,14 @@ create_secret() {
     fi
 }
 
-# Database password
-read -sp "Enter database password: " db_password
-echo
+# Database password from .env or prompt
+if [ -n "$WORDPRESS_DB_PASSWORD" ]; then
+    echo "Using database password from .env file"
+    db_password="$WORDPRESS_DB_PASSWORD"
+else
+    read -sp "Enter database password: " db_password
+    echo
+fi
 create_secret "wordpress-db-password" "$db_password"
 
 # Generate WordPress salts
@@ -47,7 +65,21 @@ create_secret "wordpress-nonce-salt" "$(generate_salt)"
 
 echo "All secrets have been created successfully!"
 echo
+echo "Configuration Summary:"
+echo "- Project: ${GCP_PROJECT_ID}"
+echo "- Region: ${GCP_REGION}"
+echo "- Cloud SQL: ${GCP_PROJECT_ID}:${GCP_REGION}:${CLOUD_SQL_INSTANCE_NAME}"
+echo
 echo "Next steps:"
-echo "1. Update cloudbuild.yaml with your Cloud SQL instance details"
-echo "2. Push to GitHub to trigger deployment"
-echo "3. Visit your Cloud Run URL to complete WordPress setup"
+echo "1. Create Cloud SQL instance if not already done:"
+echo "   gcloud sql instances create ${CLOUD_SQL_INSTANCE_NAME} --database-version=MYSQL_8_0 --tier=db-f1-micro --region=${GCP_REGION}"
+echo
+echo "2. Create database and user:"
+echo "   gcloud sql databases create wordpress --instance=${CLOUD_SQL_INSTANCE_NAME}"
+echo "   gcloud sql users create wordpress --instance=${CLOUD_SQL_INSTANCE_NAME} --password='${WORDPRESS_DB_PASSWORD}'"
+echo
+echo "3. Push to GitHub to trigger deployment:"
+echo "   git push origin main"
+echo
+echo "4. After deployment, visit your Cloud Run URL to complete WordPress setup"
+echo "   Your Cloud Run URL will be shown in the deployment logs"

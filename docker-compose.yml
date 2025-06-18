@@ -8,9 +8,9 @@ services:
     environment:
       PORT: 80
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: rootpassword
+      WORDPRESS_DB_NAME: ${LOCAL_DB_NAME:-wordpress}
+      WORDPRESS_DB_USER: ${LOCAL_DB_USER:-root}
+      WORDPRESS_DB_PASSWORD: ${LOCAL_DB_PASSWORD:-rootpassword}
       WORDPRESS_DEBUG: 'true'
       # For local development, use simple salts
       WORDPRESS_AUTH_KEY: 'local-auth-key-for-development-only'
@@ -32,8 +32,8 @@ services:
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_PASSWORD: ${LOCAL_DB_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${LOCAL_DB_NAME:-wordpress}
     volumes:
       - db_data:/var/lib/mysql
     ports:
@@ -43,8 +43,8 @@ services:
     image: phpmyadmin/phpmyadmin
     environment:
       PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: rootpassword
+      PMA_USER: ${LOCAL_DB_USER:-root}
+      PMA_PASSWORD: ${LOCAL_DB_PASSWORD:-rootpassword}
     ports:
       - "8081:80"
     depends_on:

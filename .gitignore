@@ -45,6 +45,7 @@ Thumbs.db
 # Environment files
 .env
 .env.*
+!.env.example
 
 # Google Cloud files
 /service-account-key.json
