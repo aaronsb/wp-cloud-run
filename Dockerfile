@@ -28,6 +28,11 @@ RUN { \
 # Copy custom wp-config.php if it exists
 COPY config/wp-config.php /var/www/html/wp-config.php
 
+# Copy and apply security configuration
+COPY config/security.conf /etc/apache2/conf-available/security.conf
+RUN a2enconf security && \
+    a2enmod headers rewrite
+
 # Create uploads directory with proper permissions
 RUN mkdir -p /var/www/html/wp-content/uploads && \
     chown -R www-data:www-data /var/www/html/wp-content
