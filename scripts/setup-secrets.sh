@@ -20,6 +20,9 @@ echo "Region: ${GCP_REGION}"
 echo "Cloud SQL Instance: ${CLOUD_SQL_INSTANCE_NAME}"
 echo
 
+# Set the project for gcloud commands
+gcloud config set project ${GCP_PROJECT_ID}
+
 # Function to create or update a secret
 create_secret() {
     local secret_name=$1
