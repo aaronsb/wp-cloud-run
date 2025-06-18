@@ -1,0 +1,37 @@
+# Cloud Build Trigger Configuration
+# This file documents the trigger settings for reference
+# Apply these settings in Cloud Console > Cloud Build > Triggers
+
+name: wordpress-cloud-run-deploy
+description: Deploy WordPress to Cloud Run on push to main branch
+
+# GitHub trigger configuration
+github:
+  owner: aaronsb
+  name: wp-cloud-run
+  push:
+    branch: ^main$
+
+# Build configuration
+filename: cloudbuild.yaml
+
+# Substitution variables to override defaults in cloudbuild.yaml
+substitutions:
+  _SERVICE_NAME: wordpress
+  _REGION: us-central1
+  # Update these with your actual values:
+  _CLOUD_SQL_INSTANCE: ${PROJECT_ID}:us-central1:wordpress-db
+  _DB_NAME: wordpress
+  _DB_USER: wordpress
+  _DB_PASSWORD_SECRET: wordpress-db-password
+  _AUTH_KEY_SECRET: wordpress-auth-key
+  _SECURE_AUTH_KEY_SECRET: wordpress-secure-auth-key
+  _LOGGED_IN_KEY_SECRET: wordpress-logged-in-key
+  _NONCE_KEY_SECRET: wordpress-nonce-key
+  _AUTH_SALT_SECRET: wordpress-auth-salt
+  _SECURE_AUTH_SALT_SECRET: wordpress-secure-auth-salt
+  _LOGGED_IN_SALT_SECRET: wordpress-logged-in-salt
+  _NONCE_SALT_SECRET: wordpress-nonce-salt
+
+# Include build logs in GitHub
+includeBuildLogs: INCLUDE_BUILD_LOGS_WITH_STATUS
