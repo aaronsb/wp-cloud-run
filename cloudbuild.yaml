@@ -51,9 +51,9 @@ steps:
 
 # Substitution variables with defaults
 substitutions:
-  _SERVICE_NAME: 'bock-wordpress'
-  _REGION: 'us-south1'
-  _CLOUD_SQL_INSTANCE: 'bitnami-brwgrbbowg:us-south1:wordpress-db'
+  _SERVICE_NAME: 'wordpress'
+  _REGION: 'us-central1'
+  _CLOUD_SQL_INSTANCE: 'wordpress-bockelie:us-central1:wordpress-db'
   _DB_NAME: 'wordpress'
   _DB_USER: 'wordpress'
   _DB_PASSWORD_SECRET: 'wordpress-db-password'
