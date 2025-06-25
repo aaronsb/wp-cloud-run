@@ -1,0 +1,42 @@
+{
+  "plugins": {
+    "wp-stateless": {
+      "version": "latest",
+      "source": "wordpress.org",
+      "required": true,
+      "description": "Media storage in Google Cloud Storage"
+    },
+    "akismet": {
+      "version": "latest",
+      "source": "wordpress.org",
+      "required": true,
+      "description": "Anti-spam protection"
+    },
+    "wordpress-mcp": {
+      "version": "main",
+      "source": "github",
+      "repository": "Automattic/wordpress-mcp",
+      "required": true,
+      "description": "Model Context Protocol for WordPress"
+    },
+    "wp-feature-api": {
+      "version": "trunk",
+      "source": "github",
+      "repository": "Automattic/wp-feature-api",
+      "required": true,
+      "description": "WordPress Feature API"
+    }
+  },
+  "remove_plugins": [
+    "hello-dolly"
+  ],
+  "themes": {
+    "twentytwentyfour": {
+      "version": "latest",
+      "source": "wordpress.org",
+      "required": true
+    }
+  },
+  "update_schedule": "weekly",
+  "auto_update": true
+}

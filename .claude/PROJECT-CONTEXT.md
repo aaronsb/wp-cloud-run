@@ -31,6 +31,13 @@ This repository manages a WordPress installation running on Google Cloud Run for
 - Document any manual changes made
 - Alert user if manual intervention needed
 
+## WordPress Plugin Management
+- **NEVER** tell user to manually update plugins in WordPress admin (changes are lost)
+- **ALWAYS** add required plugins to `/plugins-manifest.json`
+- **ALWAYS** add plugin documentation to `/docs/REQUIRED-PLUGINS.md`
+- Plugin updates must be built into Docker image via manifest
+- Remind user that filesystem is ephemeral if they mention plugin updates
+
 ## Repository Structure
 ```
 /
