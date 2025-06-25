@@ -10,17 +10,17 @@
 define( 'DB_NAME', getenv('WORDPRESS_DB_NAME') ?: 'wordpress' );
 define( 'DB_USER', getenv('WORDPRESS_DB_USER') ?: 'root' );
 define( 'DB_PASSWORD', getenv('WORDPRESS_DB_PASSWORD') ?: '' );
-define( 'DB_HOST', getenv('WORDPRESS_DB_HOST') ?: 'localhost' );
 define( 'DB_CHARSET', 'utf8mb4' );
 define( 'DB_COLLATE', '' );
 
 // ** Cloud SQL Socket connection ** //
 // If using Cloud SQL, the host will be in format: project:region:instance
 // Cloud Run automatically provides the socket at /cloudsql/
-if ( strpos( DB_HOST, ':' ) !== false && file_exists( '/cloudsql/' ) ) {
-    define( 'DB_SOCKET', '/cloudsql/' . DB_HOST );
-    // Override DB_HOST to use the socket
-    define( 'DB_HOST', 'localhost:' . DB_SOCKET );
+$db_host = getenv('WORDPRESS_DB_HOST') ?: 'localhost';
+if ( strpos( $db_host, ':' ) !== false && file_exists( '/cloudsql/' ) ) {
+    define( 'DB_HOST', 'localhost:/cloudsql/' . $db_host );
+} else {
+    define( 'DB_HOST', $db_host );
 }
 
 // ** Authentication Unique Keys and Salts ** //
