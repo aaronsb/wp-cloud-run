@@ -48,51 +48,45 @@ RUN a2enconf security && \
 # ./scripts/build-plugins-dockerfile.sh
 # ==============================================
 
-# Create plugin directories
-RUN mkdir -p /var/www/html/wp-content/plugins \
-             /var/www/html/wp-content/themes \
-             /var/www/html/wp-content/uploads
+# Create staging directory for our plugins
+RUN mkdir -p /usr/src/wordpress-plugins /usr/src/wordpress-themes
 
-# Remove: hello-dolly
-RUN rm -rf /var/www/html/wp-content/plugins/hello-dolly
+# Remove: hello-dolly from source
+RUN rm -f /usr/src/wordpress/wp-content/plugins/hello.php
 
 # Plugin: wp-stateless (WordPress.org)
-RUN cd /var/www/html/wp-content/plugins && \
+RUN cd /usr/src/wordpress-plugins && \
     curl -sLO https://downloads.wordpress.org/plugin/wp-stateless.latest-stable.zip && \
     unzip -q wp-stateless.latest-stable.zip && \
-    rm wp-stateless.latest-stable.zip && \
-    chown -R www-data:www-data wp-stateless
+    rm wp-stateless.latest-stable.zip
 
-# Plugin: akismet (WordPress.org)
-RUN cd /var/www/html/wp-content/plugins && \
+# Plugin: akismet (WordPress.org) - Update to latest
+RUN cd /usr/src/wordpress-plugins && \
     curl -sLO https://downloads.wordpress.org/plugin/akismet.latest-stable.zip && \
     unzip -q akismet.latest-stable.zip && \
     rm akismet.latest-stable.zip && \
-    chown -R www-data:www-data akismet
+    rm -rf /usr/src/wordpress/wp-content/plugins/akismet
 
 # Plugin: wordpress-mcp (GitHub: Automattic/wordpress-mcp)
-RUN cd /var/www/html/wp-content/plugins && \
+RUN cd /usr/src/wordpress-plugins && \
     git clone --depth 1 --branch trunk https://github.com/Automattic/wordpress-mcp.git wordpress-mcp && \
-    rm -rf wordpress-mcp/.git && \
-    chown -R www-data:www-data wordpress-mcp
+    rm -rf wordpress-mcp/.git
 
 # Plugin: wp-feature-api (GitHub: Automattic/wp-feature-api)
-RUN cd /var/www/html/wp-content/plugins && \
+RUN cd /usr/src/wordpress-plugins && \
     git clone --depth 1 --branch trunk https://github.com/Automattic/wp-feature-api.git wp-feature-api && \
-    rm -rf wp-feature-api/.git && \
-    chown -R www-data:www-data wp-feature-api
+    rm -rf wp-feature-api/.git
 
 # Theme: twentytwentyfour
-RUN cd /var/www/html/wp-content/themes && \
+RUN cd /usr/src/wordpress-themes && \
     curl -sLO https://downloads.wordpress.org/theme/twentytwentyfour.latest-stable.zip && \
     unzip -q twentytwentyfour.latest-stable.zip && \
-    rm twentytwentyfour.latest-stable.zip && \
-    chown -R www-data:www-data twentytwentyfour
+    rm twentytwentyfour.latest-stable.zip
 
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html/wp-content && \
-    find /var/www/html/wp-content -type d -exec chmod 755 {} \; && \
-    find /var/www/html/wp-content -type f -exec chmod 644 {} \;
+# Copy all plugins and themes to WordPress source directory
+RUN cp -r /usr/src/wordpress-plugins/* /usr/src/wordpress/wp-content/plugins/ && \
+    cp -r /usr/src/wordpress-themes/* /usr/src/wordpress/wp-content/themes/ && \
+    chown -R www-data:www-data /usr/src/wordpress/wp-content/
 
 # Health check endpoint
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
