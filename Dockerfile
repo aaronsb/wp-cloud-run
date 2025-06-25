@@ -4,7 +4,11 @@ FROM wordpress:6.8.1-apache
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Configure Apache to use Cloud Run's PORT environment variable
 RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf && \
@@ -70,12 +74,16 @@ RUN cd /usr/src/wordpress-plugins && \
 # Plugin: wordpress-mcp (GitHub: Automattic/wordpress-mcp)
 RUN cd /usr/src/wordpress-plugins && \
     git clone --depth 1 --branch trunk https://github.com/Automattic/wordpress-mcp.git wordpress-mcp && \
-    rm -rf wordpress-mcp/.git
+    rm -rf wordpress-mcp/.git && \
+    cd wordpress-mcp && \
+    if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader; fi
 
 # Plugin: wp-feature-api (GitHub: Automattic/wp-feature-api)
 RUN cd /usr/src/wordpress-plugins && \
     git clone --depth 1 --branch trunk https://github.com/Automattic/wp-feature-api.git wp-feature-api && \
-    rm -rf wp-feature-api/.git
+    rm -rf wp-feature-api/.git && \
+    cd wp-feature-api && \
+    if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader; fi
 
 # Theme: twentytwentyfour
 RUN cd /usr/src/wordpress-themes && \
@@ -87,6 +95,10 @@ RUN cd /usr/src/wordpress-themes && \
 RUN cp -r /usr/src/wordpress-plugins/* /usr/src/wordpress/wp-content/plugins/ && \
     cp -r /usr/src/wordpress-themes/* /usr/src/wordpress/wp-content/themes/ && \
     chown -R www-data:www-data /usr/src/wordpress/wp-content/
+
+# Create mu-plugins directory and copy auto-activation plugin
+RUN mkdir -p /usr/src/wordpress/wp-content/mu-plugins
+COPY config/mu-plugins/auto-activate-plugins.php /usr/src/wordpress/wp-content/mu-plugins/
 
 # Health check endpoint
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
