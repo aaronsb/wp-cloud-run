@@ -13,7 +13,7 @@
       "description": "Anti-spam protection"
     },
     "wordpress-mcp": {
-      "version": "main",
+      "version": "trunk",
       "source": "github",
       "repository": "Automattic/wordpress-mcp",
       "required": true,

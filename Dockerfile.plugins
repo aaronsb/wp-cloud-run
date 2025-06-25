@@ -31,7 +31,7 @@ RUN cd /var/www/html/wp-content/plugins && \
 
 # Plugin: wordpress-mcp (GitHub: Automattic/wordpress-mcp)
 RUN cd /var/www/html/wp-content/plugins && \
-    git clone --depth 1 --branch main https://github.com/Automattic/wordpress-mcp.git wordpress-mcp && \
+    git clone --depth 1 --branch trunk https://github.com/Automattic/wordpress-mcp.git wordpress-mcp && \
     rm -rf wordpress-mcp/.git && \
     chown -R www-data:www-data wordpress-mcp
 
