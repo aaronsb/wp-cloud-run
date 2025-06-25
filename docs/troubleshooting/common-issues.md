@@ -1,5 +1,19 @@
 # Common Issues & Solutions
 
+## WordPress Admin Issues
+
+### Can't Access /wp-admin (Hangs or Redirects)
+
+**Symptoms:**
+- `/wp-admin` hangs or times out
+- Redirects to upgrade.php
+- Need to add trailing slash
+
+**Solutions:**
+1. **Always use trailing slash**: `https://graph-attract.io/wp-admin/`
+2. **After WordPress updates**, visit: `https://graph-attract.io/wp-admin/upgrade.php`
+3. Click "Update WordPress Database" when prompted
+
 ## Site Not Loading
 
 ### Symptoms

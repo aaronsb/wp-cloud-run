@@ -21,7 +21,7 @@ git commit --allow-empty -m "Redeploy" && git push
 
 ## 📞 Key URLs
 - **Site**: https://graph-attract.io
-- **Admin**: https://graph-attract.io/wp-admin  
+- **Admin**: https://graph-attract.io/wp-admin/ (trailing slash required)
 - **Console**: https://console.cloud.google.com/?project=wordpress-bockelie
 - **GitHub**: https://github.com/aaronsb/wp-cloud-run
 
