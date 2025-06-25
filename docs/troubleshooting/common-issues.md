@@ -2,6 +2,24 @@
 
 ## WordPress Admin Issues
 
+### "This content is blocked" Error When Editing Posts
+
+**Symptoms:**
+- Error appears when editing posts created via API
+- Message: "This content is blocked. Contact the site owner to fix the issue."
+- Affects posts created by WordPress Feature API or other API tools
+
+**Cause:**
+Content Security Policy (CSP) was too restrictive for Gutenberg editor
+
+**Solution:**
+Fixed by implementing dual CSP configuration:
+- Admin area (`/wp-admin/*`): Permissive policy allowing all sources
+- Public pages: Maintains strict security policy
+
+**Details:**
+See [Security Architecture](../architecture/security.md#content-security-policy-csp) for full CSP configuration
+
 ### Can't Access /wp-admin (Hangs or Redirects)
 
 **Symptoms:**

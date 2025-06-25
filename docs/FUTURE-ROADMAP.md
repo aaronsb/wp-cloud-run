@@ -16,7 +16,38 @@
 - Ensure backups are working
 - Document any issues
 
-## Phase 3: Performance Optimization (Planned)
+## Phase 3: Version Management & Automation (Planned)
+
+### 3.1 Dependency Management with Dependabot
+**Goal**: Automated security updates and version tracking
+
+**Tasks**:
+- Enable GitHub Dependabot for:
+  - WordPress base image updates in Dockerfile
+  - Plugin version updates in plugins-manifest.json
+  - GitHub Actions workflow dependencies
+- Configure Dependabot to create PRs for:
+  - Security updates (auto-merge minor patches)
+  - Version updates (manual review)
+
+### 3.2 Git Tag-Based Versioning
+**Goal**: Better deployment tracking and rollback capability
+
+**Tasks**:
+- Implement semantic versioning (e.g., v1.0.0, v1.0.1)
+- Create GitHub releases for major updates
+- Modify Cloud Build trigger to:
+  - Use git tags in Cloud Run revision names
+  - Example: `wp-cloud-run-v1-2-3` instead of `wp-cloud-run-00018-pqm`
+- Add CHANGELOG.md to track version history
+
+**Benefits**:
+- Clear version history in Cloud Run console
+- Easy rollback to specific versions
+- Better tracking of what changes are in production
+- Automated security updates via Dependabot
+
+## Phase 4: Performance Optimization (Planned)
 
 ### 3.1 Zero-Scale Caching
 **Goal**: Eliminate cold starts for visitors while keeping costs at zero
