@@ -50,6 +50,7 @@ Thumbs.db
 # Google Cloud files
 /service-account-key.json
 *.json.enc
+wordpress-gcs-key.json
 
 # Backup files
 *.sql

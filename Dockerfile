@@ -1,4 +1,4 @@
-FROM wordpress:6.5-apache
+FROM wordpress:6.8.1-apache
 
 # Configure Apache to use Cloud Run's PORT environment variable
 RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf && \
