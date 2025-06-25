@@ -1,232 +1,152 @@
-# WordPress on Google Cloud Run
+# Graph-Attract.io WordPress Infrastructure
 
-This repository contains a WordPress setup optimized for Google Cloud Run with continuous deployment from GitHub.
+> WordPress on Google Cloud Run - Fully Managed, Auto-Scaling, Cost-Controlled
 
-## Features
+## 🚀 Quick Access
 
-- ✅ Serverless WordPress on Cloud Run (no OS maintenance)
-- ✅ Automatic deployments on git push
-- ✅ Cloud SQL integration
-- ✅ Environment-based configuration
-- ✅ Secure secret management
-- ✅ Optimized for performance with OPcache
+- **Production Site**: https://graph-attract.io
+- **WordPress Admin**: https://graph-attract.io/wp-admin
+- **Cloud Console**: [WordPress Project](https://console.cloud.google.com/home/dashboard?project=wordpress-bockelie)
+- **GitHub Repository**: https://github.com/aaronsb/wp-cloud-run
 
-## Prerequisites
+## 📊 Current Status
 
-1. Google Cloud Project with billing enabled
-2. Cloud SQL MySQL instance
-3. GitHub repository connected to Cloud Build
-4. Required APIs enabled:
-   - Cloud Run API
-   - Cloud Build API
-   - Cloud SQL Admin API
-   - Secret Manager API
+- **WordPress Version**: 6.8.1
+- **Infrastructure**: Google Cloud Run (Serverless)
+- **Database**: Cloud SQL MySQL 8.0
+- **Media Storage**: Google Cloud Storage
+- **Monthly Cost**: ~$35-60 (with limits enforced)
 
-## Initial Setup
+## 🏗️ Architecture Overview
 
-### 1. Create Cloud SQL Instance
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│                 │     │                  │     │                 │
+│  graph-attract  │────▶│   Cloud Run      │────▶│   Cloud SQL     │
+│      .io        │     │  (WordPress)     │     │   (MySQL 8.0)   │
+│                 │     │                  │     │                 │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+                               │
+                               ▼
+                        ┌──────────────────┐
+                        │                  │
+                        │  Cloud Storage   │
+                        │  (Media Files)   │
+                        │                  │
+                        └──────────────────┘
+```
 
+## 🛠️ Key Resources
+
+| Resource | Name | Purpose |
+|----------|------|---------|
+| **Project ID** | `wordpress-bockelie` | GCP Project |
+| **Cloud Run Service** | `wp-cloud-run` | WordPress Application |
+| **Cloud SQL Instance** | `wordpress-db` | MySQL Database |
+| **Storage Bucket** | `wordpress-bockelie-wordpress-media` | Media Files |
+| **Service Account** | `wordpress-sa@wordpress-bockelie.iam.gserviceaccount.com` | App Permissions |
+| **GitHub Repo** | `aaronsb/wp-cloud-run` | Source Code |
+
+## 📚 Documentation
+
+### Operations
+- [Daily Operations Guide](docs/operations/daily-operations.md)
+- [WordPress Updates](docs/operations/wordpress-updates.md)
+- [Backup & Restore](docs/operations/backup-restore.md)
+- [Scaling & Performance](docs/operations/scaling.md)
+
+### Architecture
+- [System Architecture](docs/architecture/overview.md)
+- [Security Configuration](docs/architecture/security.md)
+- [Cost Analysis](docs/architecture/costs.md)
+
+### Troubleshooting
+- [Common Issues](docs/troubleshooting/common-issues.md)
+- [Error Codes](docs/troubleshooting/error-codes.md)
+- [Performance Issues](docs/troubleshooting/performance.md)
+
+### Disaster Recovery
+- [Emergency Procedures](docs/recovery/emergency-procedures.md)
+- [Data Recovery](docs/recovery/data-recovery.md)
+- [Full Restore Process](docs/recovery/full-restore.md)
+
+## 🚨 Emergency Procedures
+
+### High Cost Alert
 ```bash
-gcloud sql instances create wordpress-db \
-  --database-version=MYSQL_8_0 \
-  --tier=db-f1-micro \
-  --region=us-central1
+# Immediately limit resources
+./scripts/set-spending-limits.sh
+
+# Nuclear option - stop all billing
+./scripts/emergency-shutdown.sh
 ```
 
-### 2. Create Database and User
-
+### Site Down
 ```bash
-# Create database
-gcloud sql databases create wordpress \
-  --instance=wordpress-db
+# Check service status
+gcloud run services describe wp-cloud-run --region=us-central1
 
-# Create user
-gcloud sql users create wordpress \
-  --instance=wordpress-db \
-  --password=YOUR_SECURE_PASSWORD
+# View recent logs
+gcloud logging read 'resource.type="cloud_run_revision"' --limit=50
+
+# Force redeploy
+git commit --allow-empty -m "Force redeploy" && git push
 ```
 
-### 3. Create Secrets in Secret Manager
-
+### Database Issues
 ```bash
-# Database password
-echo -n "YOUR_DB_PASSWORD" | gcloud secrets create wordpress-db-password --data-file=-
+# Check Cloud SQL status
+gcloud sql instances describe wordpress-db
 
-# WordPress salts (generate from https://api.wordpress.org/secret-key/1.1/salt/)
-echo -n "YOUR_AUTH_KEY" | gcloud secrets create wordpress-auth-key --data-file=-
-echo -n "YOUR_SECURE_AUTH_KEY" | gcloud secrets create wordpress-secure-auth-key --data-file=-
-# ... repeat for all salt keys
+# Restart if needed
+gcloud sql instances restart wordpress-db
 ```
 
-### 4. Update cloudbuild.yaml
+## 🔐 Security Notes
 
-Edit `cloudbuild.yaml` and update these values:
-- `_CLOUD_SQL_INSTANCE`: Your Cloud SQL connection name (PROJECT:REGION:INSTANCE)
-- `_DB_NAME`: Your database name (default: wordpress)
-- `_DB_USER`: Your database user (default: wordpress)
+- WordPress admin is protected by strong passwords
+- All secrets stored in Google Secret Manager
+- HTTPS enforced via Cloud Run
+- Regular automated backups
+- Media files served from GCS with public read access
 
-### 5. Connect GitHub Repository
+## 💰 Cost Controls
 
-1. Go to Cloud Console > Cloud Build > Triggers
-2. Click "Connect Repository"
-3. Select GitHub and authenticate
-4. Choose this repository
-5. Create a trigger for the main branch
+Current limits in place:
+- Max 2 Cloud Run instances
+- 256MB memory per instance
+- Budget alerts at $25, $40, $45, $50
+- Cloud SQL can be paused to save ~$25/month
 
-## Local Development
+## 🔄 Continuous Deployment
 
-### Using Docker Compose
+Any push to `main` branch triggers:
+1. Cloud Build creates new Docker image
+2. Image pushed to Artifact Registry
+3. Cloud Run deploys new revision
+4. Zero-downtime deployment
 
-Create a `docker-compose.yml` for local development:
+## 📧 Monitoring & Alerts
 
-```yaml
-version: '3.8'
+- Budget alerts sent to account email
+- Cloud Run errors logged to Cloud Logging
+- Uptime monitoring via Cloud Run metrics
 
-services:
-  wordpress:
-    build: .
-    ports:
-      - "8080:80"
-    environment:
-      PORT: 80
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: rootpassword
-    volumes:
-      - ./wp-content:/var/www/html/wp-content
-    depends_on:
-      - db
+## 🤝 Contributing
 
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: wordpress
-    volumes:
-      - db_data:/var/lib/mysql
+1. Clone the repository
+2. Create feature branch
+3. Test locally with `docker-compose up`
+4. Push to GitHub - auto-deploys to production
 
-volumes:
-  db_data:
-```
+## 📞 Support
 
-Run with: `docker-compose up`
+This infrastructure is maintained using Claude Code as the primary SRE.
+- For changes: Use Claude Code with this repository
+- For issues: Check troubleshooting guides first
+- For emergencies: Use emergency scripts
 
-## Deployment
+---
 
-### Automatic Deployment
-
-Simply push to your main branch:
-
-```bash
-git add .
-git commit -m "Update WordPress configuration"
-git push origin main
-```
-
-Cloud Build will automatically:
-1. Build the Docker image
-2. Push to Container Registry
-3. Deploy to Cloud Run
-
-### Manual Deployment
-
-```bash
-# Build and push image
-docker build -t gcr.io/YOUR_PROJECT_ID/wordpress-cloudrun .
-docker push gcr.io/YOUR_PROJECT_ID/wordpress-cloudrun
-
-# Deploy to Cloud Run
-gcloud run deploy wordpress \
-  --image gcr.io/YOUR_PROJECT_ID/wordpress-cloudrun \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --add-cloudsql-instances YOUR_PROJECT:us-central1:wordpress-db
-```
-
-## Post-Deployment Steps
-
-### 1. Complete WordPress Installation
-
-Visit your Cloud Run URL and complete the WordPress installation wizard.
-
-### 2. Install Required Plugins
-
-For media uploads to work properly, install:
-- **WP Stateless** - Integrates with Google Cloud Storage
-- **WP Offload Media Lite** - Alternative GCS plugin
-
-### 3. Configure HTTPS
-
-Cloud Run automatically provides HTTPS. Update WordPress settings:
-- WordPress Address (URL): https://your-service-url.run.app
-- Site Address (URL): https://your-service-url.run.app
-
-### 4. Custom Domain (Optional)
-
-```bash
-gcloud run domain-mappings create \
-  --service wordpress \
-  --domain yourdomain.com \
-  --region us-central1
-```
-
-## Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| WORDPRESS_DB_HOST | Cloud SQL instance connection name | Yes |
-| WORDPRESS_DB_NAME | Database name | Yes |
-| WORDPRESS_DB_USER | Database username | Yes |
-| WORDPRESS_DB_PASSWORD | Database password (use Secret Manager) | Yes |
-| WORDPRESS_DEBUG | Enable debug mode (true/false) | No |
-| WORDPRESS_TABLE_PREFIX | Database table prefix | No |
-| WORDPRESS_MULTISITE | Enable multisite (true/false) | No |
-
-## Troubleshooting
-
-### Database Connection Issues
-
-1. Verify Cloud SQL instance is running
-2. Check Cloud SQL connection in Cloud Run service
-3. Verify database credentials in Secret Manager
-
-### Performance Issues
-
-1. Increase Cloud Run CPU/Memory allocation
-2. Enable Cloud CDN for static assets
-3. Use Redis Memorystore for object caching
-
-### File Upload Issues
-
-1. Install GCS plugin (WP Stateless)
-2. Configure Cloud Storage bucket
-3. Set proper CORS policy on bucket
-
-## Security Best Practices
-
-1. ✅ Use Secret Manager for sensitive data
-2. ✅ Enable Cloud SQL private IP
-3. ✅ Restrict Cloud Run ingress to "internal and cloud load balancing"
-4. ✅ Use Cloud Armor for DDoS protection
-5. ✅ Regular backups with Cloud SQL automated backups
-
-## Cost Optimization
-
-- Use minimum instances = 0 for dev environments
-- Set maximum instances based on expected traffic
-- Use Cloud SQL stop/start for non-production
-- Enable Cloud CDN to reduce Cloud Run requests
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License.# Trigger build Tue Jun 24 07:22:49 PM CDT 2025
+*Last Updated: June 2025*
+*Maintained with Claude Code*
