@@ -32,6 +32,34 @@ See [Security Architecture](../architecture/security.md#content-security-policy-
 2. **After WordPress updates**, visit: `https://graph-attract.io/wp-admin/upgrade.php`
 3. Click "Update WordPress Database" when prompted
 
+## WP Stateless Error Notices
+
+### Symptoms
+- Error notice scripts loading on every admin page
+- `error-notice.js` and `error-notice.css` files being loaded
+- May indicate missing bucket permissions or configuration
+
+### Solution
+1. **Fixed: Bucket Permissions** (June 25, 2025)
+   - Added `wordpress-sa` service account to bucket permissions
+   - Role: `roles/storage.objectAdmin`
+   
+2. **Configure WP Stateless in Admin**:
+   - Go to Media → Stateless Settings
+   - Mode: Set to "CDN" or "Stateless" 
+   - Bucket: `wordpress-bockelie-wordpress-media`
+   - The service account is already configured via IAM
+
+### Verification
+```bash
+# Check bucket permissions
+gcloud storage buckets get-iam-policy gs://wordpress-bockelie-wordpress-media
+
+# Verify service account has objectAdmin role
+gcloud projects get-iam-policy wordpress-bockelie \
+  --filter="bindings.members:wordpress-sa@wordpress-bockelie.iam.gserviceaccount.com"
+```
+
 ## Site Not Loading
 
 ### Symptoms
