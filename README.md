@@ -70,6 +70,9 @@
 - [Data Recovery](docs/recovery/data-recovery.md)
 - [Full Restore Process](docs/recovery/full-restore.md)
 
+### Planning
+- [Future Roadmap](docs/FUTURE-ROADMAP.md) - Planned optimizations including caching
+
 ## 🚨 Emergency Procedures
 
 ### High Cost Alert
