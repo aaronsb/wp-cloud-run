@@ -115,8 +115,9 @@ gcloud sql instances restart wordpress-db
 Current limits in place:
 - Max 2 Cloud Run instances
 - 256MB memory per instance
-- Budget alerts at $25, $40, $45, $50
+- Budget alerts at $25, $40, $45, $50 (email notifications)
 - Cloud SQL can be paused to save ~$25/month
+- Automated shutdown available at 90% threshold (see [Budget Automation](docs/BUDGET-AUTOMATION.md))
 
 ## 🔄 Continuous Deployment
 

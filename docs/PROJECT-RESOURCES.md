@@ -83,11 +83,22 @@
 
 ## Cost Management
 
-### Current Limits
-- **Monthly Budget**: $50 with alerts at 50%, 80%, 90%, 100%
+### Budget Alert Configuration
+- **Budget ID**: `dab3b11e-13d4-41d3-8c3a-0490bc93b532`
+- **Monthly Budget**: $50 USD
+- **Alert Thresholds**:
+  - 50% ($25) - Early warning
+  - 80% ($40) - Approaching limit
+  - 90% ($45) - Critical warning
+  - 100% ($50) - Budget reached
+- **Created**: June 25, 2025
+- **Email Notifications**: Sent to account owner
+
+### Current Resource Limits
 - **Max Instances**: 2
 - **Memory per Instance**: 256MB
 - **Concurrent Requests**: 10 per instance
+- **Cloud SQL Tier**: db-g1-small ($25.55/month)
 
 ### Monitoring
 - **Billing Dashboard**: https://console.cloud.google.com/billing

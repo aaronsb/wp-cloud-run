@@ -32,17 +32,25 @@ echo "Check billing at: https://console.cloud.google.com/billing"
 ## 🚨 Emergency Response Procedures
 
 ### High Cost Alert Response
-1. First, check what's causing high costs:
+
+**Budget Alerts are configured at: 50% ($25), 80% ($40), 90% ($45), 100% ($50)**
+
+1. When you receive a budget alert email, check current spend:
+   ```bash
+   echo "Check billing at: https://console.cloud.google.com/billing/budgets?project=wordpress-bockelie"
+   ```
+
+2. Check what's causing high costs:
    ```bash
    gcloud run services describe wp-cloud-run --region=us-central1 --format=json | jq '.spec.template.spec'
    ```
 
-2. Apply spending limits:
+3. Apply spending limits:
    ```bash
    ./scripts/set-spending-limits.sh
    ```
 
-3. If costs are extreme, execute emergency shutdown:
+4. If at 90% or above, consider emergency shutdown:
    ```bash
    ./scripts/emergency-shutdown.sh
    ```
