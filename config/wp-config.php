@@ -44,6 +44,17 @@ if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && $_SERVER['HTTP_X_FORWARDED_P
     $_SERVER['HTTPS'] = 'on';
 }
 
+// ** WordPress Site URLs ** //
+// Use environment variables if set, otherwise use the custom domain
+if ( getenv('WP_HOME') ) {
+    define( 'WP_HOME', getenv('WP_HOME') );
+    define( 'WP_SITEURL', getenv('WP_SITEURL') ?: getenv('WP_HOME') );
+} else {
+    // Default to graph-attract.io
+    define( 'WP_HOME', 'https://graph-attract.io' );
+    define( 'WP_SITEURL', 'https://graph-attract.io' );
+}
+
 // ** WordPress Debugging Mode ** //
 define( 'WP_DEBUG', getenv('WORDPRESS_DEBUG') === 'true' );
 define( 'WP_DEBUG_LOG', getenv('WORDPRESS_DEBUG') === 'true' );
