@@ -1,21 +1,16 @@
 <?php
 /**
  * Plugin Name: Auto-activate Required Plugins
- * Description: Automatically activates required plugins on load
- * Version: 1.0
+ * Description: Automatically activates required plugins on every load
+ * Version: 2.0
  */
 
-// Only run in admin or if plugins need activation
-if (!is_admin() && get_option('_plugins_activated', false)) {
+// Only run in admin
+if (!is_admin()) {
     return;
 }
 
 add_action('admin_init', function() {
-    // Skip if already activated
-    if (get_option('_plugins_activated', false)) {
-        return;
-    }
-
     $required_plugins = [
         'akismet/akismet.php',
         'wp-stateless/wp-stateless.php', 
@@ -25,18 +20,21 @@ add_action('admin_init', function() {
     ];
 
     $activated = [];
+    $already_active = [];
+    
     foreach ($required_plugins as $plugin) {
         if (file_exists(WP_PLUGIN_DIR . '/' . $plugin)) {
-            activate_plugin($plugin);
-            $activated[] = $plugin;
+            if (!is_plugin_active($plugin)) {
+                activate_plugin($plugin);
+                $activated[] = $plugin;
+            } else {
+                $already_active[] = $plugin;
+            }
         }
     }
 
-    // Mark as done
+    // Show admin notice only if we activated something new
     if (!empty($activated)) {
-        update_option('_plugins_activated', true);
-        
-        // Show admin notice
         add_action('admin_notices', function() use ($activated) {
             echo '<div class="notice notice-success"><p>Auto-activated plugins: ' . 
                  implode(', ', array_map('basename', $activated)) . '</p></div>';
