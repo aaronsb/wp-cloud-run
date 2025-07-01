@@ -85,6 +85,12 @@ RUN cd /usr/src/wordpress-plugins && \
     cd wp-feature-api && \
     if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader; fi
 
+# Plugin: merpress (WordPress.org)
+RUN cd /usr/src/wordpress-plugins && \
+    curl -sLO https://downloads.wordpress.org/plugin/merpress.latest-stable.zip && \
+    unzip -q merpress.latest-stable.zip && \
+    rm merpress.latest-stable.zip
+
 # Theme: twentytwentyfour
 RUN cd /usr/src/wordpress-themes && \
     curl -sLO https://downloads.wordpress.org/theme/twentytwentyfour.latest-stable.zip && \
