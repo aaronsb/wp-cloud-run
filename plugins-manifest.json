@@ -25,6 +25,12 @@
       "repository": "Automattic/wp-feature-api",
       "required": true,
       "description": "WordPress Feature API"
+    },
+    "merpress": {
+      "version": "latest",
+      "source": "wordpress.org",
+      "required": true,
+      "description": "Create diagrams and visualizations using MermaidJS"
     }
   },
   "remove_plugins": [

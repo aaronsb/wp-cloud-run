@@ -41,6 +41,13 @@ RUN cd /var/www/html/wp-content/plugins && \
     rm -rf wp-feature-api/.git && \
     chown -R www-data:www-data wp-feature-api
 
+# Plugin: merpress (WordPress.org)
+RUN cd /var/www/html/wp-content/plugins && \
+    curl -sLO https://downloads.wordpress.org/plugin/merpress.latest-stable.zip && \
+    unzip -q merpress.latest-stable.zip && \
+    rm merpress.latest-stable.zip && \
+    chown -R www-data:www-data merpress
+
 # Theme: twentytwentyfour
 RUN cd /var/www/html/wp-content/themes && \
     curl -sLO https://downloads.wordpress.org/theme/twentytwentyfour.latest-stable.zip && \

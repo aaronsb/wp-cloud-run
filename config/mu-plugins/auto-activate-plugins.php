@@ -20,7 +20,8 @@ add_action('admin_init', function() {
         'akismet/akismet.php',
         'wp-stateless/wp-stateless.php', 
         'wordpress-mcp/wordpress-mcp.php',
-        'wp-feature-api/wp-feature-api.php'
+        'wp-feature-api/wp-feature-api.php',
+        'merpress/merpress.php'
     ];
 
     $activated = [];
