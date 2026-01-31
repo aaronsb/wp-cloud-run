@@ -97,6 +97,9 @@ RUN cd /usr/src/wordpress-themes && \
     unzip -q twentytwentyfour.latest-stable.zip && \
     rm twentytwentyfour.latest-stable.zip
 
+# Custom plugins (local)
+COPY custom-plugins/astral-screensaver /usr/src/wordpress-plugins/astral-screensaver
+
 # Copy all plugins and themes to WordPress source directory
 RUN cp -r /usr/src/wordpress-plugins/* /usr/src/wordpress/wp-content/plugins/ && \
     cp -r /usr/src/wordpress-themes/* /usr/src/wordpress/wp-content/themes/ && \

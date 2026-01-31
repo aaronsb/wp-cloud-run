@@ -1,0 +1,91 @@
+#astral-screensaver {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  cursor: none;
+  z-index: 9999;
+}
+
+.astral-cursor {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10000;
+  transition: transform 0.05s ease-out;
+}
+
+.astral-snark {
+  position: absolute;
+  transform: translate(-50%, -150%);
+  background: rgba(90, 82, 70, 0.9);
+  color: #e8e2d8;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-style: italic;
+  font-family: 'SF Mono', Monaco, Consolas, monospace;
+  max-width: 280px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.astral-snark::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(90, 82, 70, 0.9);
+}
+
+.astral-wisdom-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.astral-wisdom {
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  color: rgba(120, 110, 95, 0.7);
+  letter-spacing: 0.2em;
+  text-transform: lowercase;
+  font-style: italic;
+  font-weight: 300;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+  text-align: center;
+  max-width: 80vw;
+  text-shadow: 0 0 30px rgba(210, 198, 180, 0.5);
+}
+
+.astral-attribution {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  font-size: 0.7rem;
+  color: rgba(150, 140, 125, 0.5);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.astral-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(180, 170, 155, 0.3) 100%);
+}
+
+@keyframes snarkIn {
+  from { opacity: 0; transform: translate(-50%, -130%); }
+  to { opacity: 1; transform: translate(-50%, -150%); }
+}

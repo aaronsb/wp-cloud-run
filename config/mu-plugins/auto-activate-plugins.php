@@ -16,7 +16,8 @@ add_action('admin_init', function() {
         'wp-stateless/wp-stateless.php', 
         'wordpress-mcp/wordpress-mcp.php',
         'wp-feature-api/wp-feature-api.php',
-        'merpress/merpress.php'
+        'merpress/merpress.php',
+        'astral-screensaver/astral-screensaver.php'
     ];
 
     $activated = [];
