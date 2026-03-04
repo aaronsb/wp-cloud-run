@@ -1,4 +1,4 @@
-FROM wordpress:6.8.3-apache
+FROM wordpress:6.9.1-apache
 
 # Install required tools for plugin management
 RUN apt-get update && apt-get install -y \
